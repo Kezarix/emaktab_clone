@@ -1,0 +1,91 @@
+# ==========================================
+# Python & Django Core
+# ==========================================
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+local_settings.py
+db.sqlite3
+db.sqlite3-journal
+
+# ==========================================
+# Environment & Secrets (NEVER commit these)
+# ==========================================
+.env
+.venv
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+
+# ==========================================
+# Django Media and Static Assets
+# ==========================================
+# Ignore uploaded media but keep the directory if needed
+media/
+# Ignore collected static files (generate on deployment instead)
+static/
+staticfiles/
+
+# ==========================================
+# Logs & Databases
+# ==========================================
+*.log
+*.database
+*.sql
+*.sqlite
+
+# ==========================================
+# IDEs and Text Editors
+# ==========================================
+.vscode/
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.swp
+.DS_Store
+
+# ==========================================
+# Testing & Coverage
+# ==========================================
+.htmlcov/
+.tox/
+.nosexy/
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+.hypothesis/
+.pytest_cache/
+
+# ==========================================
+# API Documentation & Package Tools
+# ==========================================
+# If using automated API documentation / OpenAPI schemas
+.openapi/
+openapi.yaml
+openapi.json
+
+# Packaging
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
