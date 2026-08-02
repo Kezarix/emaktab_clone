@@ -2,6 +2,9 @@ from django.apps import apps
 from rest_framework import serializers
 from django.contrib.auth import get_user_model
 from .models import Subject, StudyGroup, Schedule, CalendarLesson, Mark
+from rest_framework import viewsets, exceptions
+from rest_framework.permissions import IsAuthenticated
+from .models import HomeworkSubmission
 
 User = get_user_model()
 SchoolGradeModel = apps.get_model('school', 'SchoolGrade')
@@ -136,3 +139,24 @@ class TeacherLessonSerializer(serializers.ModelSerializer):
     class Meta:
         model = CalendarLesson
         fields = ['id', 'date', 'schedule']
+
+
+
+class HomeworkSubmissionSerializer(serializers.ModelSerializer):
+    student = serializers.ReadOnlyField(source='student.username')
+    subject_name = serializers.ReadOnlyField(source='lesson.schedule.subject.name', default='Не указан')
+    lesson_date = serializers.ReadOnlyField(source='lesson.date')
+    lesson_time = serializers.ReadOnlyField(source='lesson.schedule.start_time')
+
+    class Meta:
+        model = HomeworkSubmission
+        fields = [
+            'id', 'lesson', 'student', 'subject_name',
+            'lesson_date', 'lesson_time', 'text_answer',
+            'file_answer', 'created_at'
+        ]
+
+    def validate(self, attrs):
+        if not attrs.get('text_answer') and not attrs.get('file_answer'):
+            raise serializers.ValidationError("You must write text or file answer")
+        return attrs

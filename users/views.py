@@ -17,7 +17,7 @@ class UserViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         user = self.request.user
-        if user.is_superuser or user.is_staff or user.role in ['admin', 'director', 'head_teacher']:
+        if user.is_superuser or user.is_staff or getattr(user, 'role', None) in ['admin', 'director', 'head_teacher']:
             return User.objects.all()
         return User.objects.filter(id=user.id)
 
@@ -29,7 +29,7 @@ class ScheduleViewSet(viewsets.ModelViewSet):
 
     def create(self, request, *args, **kwargs):
         user = request.user
-        if not (user.is_superuser or user.is_staff or user.role in ['admin', 'director', 'head_teacher']):
+        if not (user.is_superuser or user.is_staff or getattr(user, 'role', None) in ['admin', 'director', 'head_teacher']):
             return Response(
                 {"detail": "You do not have permission to modify the schedule."},
                 status=status.HTTP_403_FORBIDDEN

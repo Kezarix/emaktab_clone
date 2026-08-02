@@ -1,7 +1,6 @@
 from django.contrib import admin
-from .models import User, AssessmentWork, AssessmentGrade, TermGrade, SupportChat, SupportMessage
+from .models import AssessmentWork, AssessmentGrade, TermGrade, SupportChat, SupportMessage
 
-admin.site.register(User)
 admin.site.register(TermGrade)
 admin.site.register(SupportChat)
 admin.site.register(SupportMessage)

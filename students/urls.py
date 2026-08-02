@@ -9,7 +9,7 @@ from .views import (
     AttendanceAndGradeViewSet,
     MarkViewSet,
     SupportMessageViewSet,
-    TeacherLessonViewSet
+    TeacherLessonViewSet, HomeworkSubmissionViewSet
 )
 
 router = DefaultRouter()
@@ -22,6 +22,7 @@ router.register(r'attendance-grades', AttendanceAndGradeViewSet, basename='atten
 router.register(r'marks', MarkViewSet, basename='mark')
 router.register(r'support-messages', SupportMessageViewSet, basename='supportmessage')
 router.register(r'teacher-lessons', TeacherLessonViewSet, basename='teacher-lesson')
+router.register(r'homework-submissions', HomeworkSubmissionViewSet, basename='homework-submission')
 
 urlpatterns = [
     path('', include(router.urls)),

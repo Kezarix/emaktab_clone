@@ -6,12 +6,13 @@ from rest_framework.exceptions import ValidationError
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
+from .serializers import HomeworkSubmissionSerializer
 
 from structure.models import SupportMessage
 from structure.serializers import SupportMessageSerializer
 from users.permissions import IsTeacher
 from users.serializers import MarkSerializer
-from .models import Subject, StudyGroup, Schedule, CalendarLesson, Mark
+from .models import Subject, StudyGroup, Schedule, CalendarLesson, Mark, HomeworkSubmission
 from .permissions import IsTeacherOrAdminOrReadOnly
 from .serializers import (
     StudentSerializer,
@@ -20,7 +21,7 @@ from .serializers import (
     ScheduleSerializer,
     CalendarLessonSerializer,
     AttendanceAndGradeSerializer,
-    TeacherLessonSerializer
+    TeacherLessonSerializer, HomeworkSubmissionSerializer
 )
 
 User = get_user_model()
@@ -196,3 +197,26 @@ class TeacherLessonViewSet(viewsets.ReadOnlyModelViewSet):
                 return CalendarLesson.objects.none()
 
         return qs.filter(date__range=[start_of_week, end_of_week]).order_by('date', 'schedule__start_time')
+
+
+class HomeworkSubmissionViewSet(viewsets.ModelViewSet):
+    serializer_class = HomeworkSubmissionSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        user = self.request.user
+
+        if user.role == 'teacher' or user.is_staff:
+            qs = HomeworkSubmission.objects.all()
+        else:
+            qs = HomeworkSubmission.objects.filter(student=user)
+
+        date_param = self.request.query_params.get('date')
+        if date_param:
+            date_param = date_param.rstrip('/')
+            qs = qs.filter(lesson__date=date_param)
+
+        return qs.order_by('-created_at')
+
+    def perform_create(self, serializer):
+        serializer.save(student=self.request.user)

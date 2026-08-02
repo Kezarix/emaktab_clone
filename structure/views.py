@@ -1,9 +1,5 @@
-
-from rest_framework import viewsets, status
-from rest_framework.response import Response
-from rest_framework.permissions import IsAuthenticated, AllowAny
-
-from .models import User
+from django.contrib.auth import get_user_model
+from rest_framework import viewsets
 from school.models import SchoolGrade
 
 from .serializers import (
@@ -11,6 +7,8 @@ from .serializers import (
     SchoolGradeSerializer
 )
 from .permissions import IsSystemAdmin
+
+User = get_user_model()
 
 
 class UserManagementViewSet(viewsets.ModelViewSet):

@@ -8,7 +8,10 @@ User = get_user_model()
 class UserListSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ['id', 'username', 'email', 'first_name', 'last_name', 'role', 'is_staff']
+        fields = [
+            'id', 'username', 'email', 'first_name', 'last_name',
+            'fathers_name', 'phone', 'role', 'birth_date', 'school_class', 'is_staff'
+        ]
 
 
 class ScheduleSerializer(serializers.ModelSerializer):

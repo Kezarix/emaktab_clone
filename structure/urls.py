@@ -8,7 +8,6 @@ router = DefaultRouter()
 router.register(r'users', UserManagementViewSet)
 router.register(r'grades', SchoolGradeViewSet)
 
-
 urlpatterns = [
     path('', include(router.urls)),
 ]

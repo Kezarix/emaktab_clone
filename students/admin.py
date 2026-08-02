@@ -4,6 +4,30 @@ from .models import StudyGroup, CalendarLesson, Subject, Schedule
 from django.contrib import admin
 from .models import Mark
 
+from .models import HomeworkSubmission
+
+
+@admin.register(HomeworkSubmission)
+class HomeworkSubmissionAdmin(admin.ModelAdmin):
+    list_display = ('id', 'student', 'get_subject', 'get_lesson_date', 'get_lesson_time', 'created_at')
+
+    list_filter = ('lesson__date', 'lesson__schedule__subject', 'created_at')
+
+    search_fields = ('student__username', 'student__last_name', 'lesson__schedule__subject__name', 'text_answer')
+
+    readonly_fields = ('created_at',)
+
+    @admin.display(ordering='lesson__schedule__subject__name', description='Предмет')
+    def get_subject(self, obj):
+        return obj.lesson.schedule.subject.name
+
+    @admin.display(ordering='lesson__date', description='Дата урока')
+    def get_lesson_date(self, obj):
+        return obj.lesson.date
+
+    @admin.display(ordering='lesson__schedule__start_time', description='Время начала')
+    def get_lesson_time(self, obj):
+        return obj.lesson.schedule.start_time
 
 @admin.register(Mark)
 class AttendanceAndGradeAdmin(admin.ModelAdmin):

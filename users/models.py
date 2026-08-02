@@ -4,8 +4,10 @@ from django.db import models
 
 class User(AbstractUser):
     ROLE_CHOICES = (
-        ('admin', 'School Administrator'),
-        ('director', 'Director'),
+        ('admin', 'System Administrator'),
+        ('clerk', 'Ministry Employee'),
+        ('helper', 'Support Staff'),
+        ('director', 'School Director'),
         ('head_teacher', 'Head Teacher'),
         ('teacher', 'Teacher'),
         ('parent', 'Parent'),
@@ -16,21 +18,7 @@ class User(AbstractUser):
     email = models.EmailField(blank=True, null=True, unique=True, verbose_name="Email")
     phone = models.CharField(max_length=20, blank=True, null=True, verbose_name="Phone")
     fathers_name = models.CharField(max_length=150, blank=True, null=True, verbose_name="Patronymic")
-
-    groups = models.ManyToManyField(
-        'auth.Group',
-        verbose_name='Groups',
-        blank=True,
-        related_name='structure_User_groups',
-        related_query_name='user',
-    )
-    user_permissions = models.ManyToManyField(
-        'auth.Permission',
-        verbose_name='User permissions',
-        blank=True,
-        related_name='structure_User_permissions',
-        related_query_name='user',
-    )
+    birth_date = models.DateField(blank=True, null=True, verbose_name="Birth Date")
 
     school_class = models.ForeignKey(
         'school.SchoolGrade',
@@ -41,8 +29,6 @@ class User(AbstractUser):
         null=True
     )
 
-    birth_date = models.DateField(verbose_name="Birth Date", blank=True, null=True)
-
     parents = models.ManyToManyField(
         'self',
         blank=True,
@@ -52,11 +38,27 @@ class User(AbstractUser):
         verbose_name="Parents"
     )
 
+    groups = models.ManyToManyField(
+        'auth.Group',
+        verbose_name='Groups',
+        blank=True,
+        related_name='custom_user_groups',
+        related_query_name='user',
+    )
+    user_permissions = models.ManyToManyField(
+        'auth.Permission',
+        verbose_name='User permissions',
+        blank=True,
+        related_name='custom_user_permissions',
+        related_query_name='user',
+    )
+
     class Meta:
         verbose_name = "User"
         verbose_name_plural = "Users"
 
     def __str__(self):
-        if self.first_name or self.last_name:
-            return f"{self.last_name} {self.first_name}"
+        full_name = f"{self.last_name} {self.first_name}".strip()
+        if full_name:
+            return f"{full_name} ({self.username})"
         return self.username

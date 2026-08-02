@@ -1,14 +1,15 @@
 from rest_framework import serializers
+from django.contrib.auth import get_user_model
+from school.models import SchoolGrade
 from .models import SupportMessage, SupportChat
 
-from .models import User
-from school.models import SchoolGrade
+User = get_user_model()
 
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ('id', 'username', 'first_name', 'last_name', 'fathers_name', 'email', 'phone', 'role',)
+        fields = ('id', 'username', 'first_name', 'last_name', 'fathers_name', 'email', 'phone', 'role')
 
 
 class SchoolGradeSerializer(serializers.ModelSerializer):
@@ -37,7 +38,7 @@ class SupportMessageSerializer(serializers.ModelSerializer):
         user = request.user
 
         is_chat_owner = (user.id == chat.user_id)
-        is_helper = (user.role in ['helper', 'admin'])
+        is_helper = (getattr(user, 'role', None) in ['helper', 'admin'])
 
         if not is_chat_owner and not is_helper:
             raise serializers.ValidationError("You have no permission to write in this chat")

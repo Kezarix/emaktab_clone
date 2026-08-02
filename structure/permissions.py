@@ -15,7 +15,7 @@ class IsClerkOrAdmin(BasePermission):
         return bool(
             request.user and
             request.user.is_authenticated and
-            request.user.role in ['clerk', 'admin']
+            getattr(request.user, 'role', None) in ['clerk', 'admin']
         )
 
 
@@ -24,5 +24,5 @@ class IsDirectorOfSchool(BasePermission):
         return bool(
             request.user and
             request.user.is_authenticated and
-            request.user.role == 'director'
+            getattr(request.user, 'role', None) == 'director'
         )

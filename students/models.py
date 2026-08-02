@@ -1,6 +1,9 @@
 from django.core.exceptions import ValidationError
 from django.db import models
 from django.conf import settings
+from typing import Self
+
+
 
 
 class Subject(models.Model):
@@ -69,7 +72,6 @@ class CalendarLesson(models.Model):
 
     def clean(self):
         super().clean()
-        # Validation checks only if the user provides partial/empty homework details where required
         if not self.homework and not self.homework_file and not self.homework_url:
             raise ValidationError("You must fill in at least one homework field: text, file, or URL.")
 
@@ -83,10 +85,33 @@ class CalendarLesson(models.Model):
         unique_together = ('schedule', 'date')
 
     def __str__(self):
-        if self.schedule:
-            return f"{self.date} | {self.schedule.subject.name} | {self.schedule.school_class}"
-        return f"{self.date} | No Schedule"
+        subject = self.schedule.subject.name if self.schedule and self.schedule.subject else "Без предмета"
+        start_time = self.schedule.start_time.strftime(
+            '%H:%M') if self.schedule and self.schedule.start_time else "00:00"
 
+        return f"{subject} | {self.date} | в {start_time}"
+
+
+class HomeworkSubmission(models.Model):
+    lesson = models.ForeignKey(
+        'CalendarLesson',
+        on_delete=models.CASCADE,
+        related_name='submissions'
+    )
+    student = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name='homework_submissions'
+    )
+    text_answer = models.TextField(blank=True, null=True)
+    file_answer = models.FileField(upload_to='homework_submissions/', blank=True, null=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        unique_together = ('lesson', 'student')
+
+    def __str__(self):
+        return f"Ответ от {self.student.username} на урок {self.lesson_id}"
 
 class Mark(models.Model):
     student = models.ForeignKey(

@@ -1,50 +1,7 @@
-from django.contrib.auth.models import AbstractUser
 from django.core.exceptions import ValidationError
 from django.db import models
 from django.db.models import Sum
-from Kundalik import settings
-
-
-class User(AbstractUser):
-    ROLE_CHOICES = (
-        ('admin', 'System Administrator'),
-        ('clerk', 'Ministry Employee'),
-        ('helper', 'Support Staff'),
-        ('director', 'School Director'),
-        ('teacher', 'Teacher'),
-        ('parent', 'Parent'),
-        ('student', 'Student'),
-    )
-
-    role = models.CharField(max_length=20, choices=ROLE_CHOICES, verbose_name="Role")
-    email = models.EmailField(blank=True, null=True, verbose_name="Email")
-    phone = models.CharField(max_length=20, blank=True, null=True, verbose_name="Phone")
-    fathers_name = models.CharField(max_length=150, verbose_name="Patronymic")
-
-    groups = models.ManyToManyField(
-        'auth.Group',
-        verbose_name='Groups',
-        blank=True,
-        related_name='structure_user_groups',
-        related_query_name='user',
-    )
-    user_permissions = models.ManyToManyField(
-        'auth.Permission',
-        verbose_name='User permissions',
-        blank=True,
-        related_name='structure_user_permissions',
-        related_query_name='user',
-    )
-
-    class Meta:
-        verbose_name = "User"
-        verbose_name_plural = "Users"
-
-    def __str__(self):
-        full_name = f"{self.last_name} {self.first_name}".strip()
-        if full_name:
-            return f"{full_name} ({self.username})"
-        return self.username
+from django.conf import settings
 
 
 class AssessmentWork(models.Model):
@@ -139,7 +96,12 @@ class AssessmentWork(models.Model):
 
 
 class AssessmentGrade(models.Model):
-    student = models.ForeignKey('users.User', on_delete=models.CASCADE, related_name='assessment_grades', verbose_name="Student")
+    student = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name='assessment_grades',
+        verbose_name="Student"
+    )
     work = models.ForeignKey(AssessmentWork, on_delete=models.CASCADE, related_name='grades', verbose_name="Assessment Work")
     earned_score = models.PositiveIntegerField(default=0, verbose_name="Earned Score")
     is_absent = models.BooleanField(default=False, verbose_name="Absent (Abs)")
@@ -192,8 +154,12 @@ class TermGrade(models.Model):
         (7, 'Annual Grade'),
     ]
 
-    student = models.ForeignKey('users.User', on_delete=models.CASCADE, related_name='term_grades',
-                                verbose_name="Student")
+    student = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name='term_grades',
+        verbose_name="Student"
+    )
     schedule = models.ForeignKey('students.Schedule', on_delete=models.CASCADE, related_name='term_grades',
                                  verbose_name="Subject / Schedule")
     term = models.PositiveSmallIntegerField(choices=TERM_CHOICES, verbose_name="Period")
@@ -260,7 +226,7 @@ class SupportChat(models.Model):
 
     def clean(self):
         super().clean()
-        if self.user_id and self.user.role not in ['teacher', 'admin', 'director']:
+        if self.user_id and getattr(self.user, 'role', None) not in ['teacher', 'admin', 'director']:
             raise ValidationError("Only teachers or administration can initiate a support chat.")
 
     def save(self, *args, **kwargs):
@@ -273,8 +239,13 @@ class SupportChat(models.Model):
 
 class SupportMessage(models.Model):
     chat = models.ForeignKey(SupportChat, on_delete=models.CASCADE, related_name='messages', verbose_name="Chat")
-    sender = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, verbose_name="Sender",
-                               blank=True, null=True)
+    sender = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        verbose_name="Sender",
+        blank=True,
+        null=True
+    )
     text = models.TextField(verbose_name="Message Text")
     created_at = models.DateTimeField(auto_now_add=True, verbose_name="Sent At")
 
@@ -289,7 +260,7 @@ class SupportMessage(models.Model):
             return
 
         is_chat_owner = (self.sender_id == self.chat.user_id)
-        is_helper = (self.sender.role in ['helper', 'admin'])
+        is_helper = (getattr(self.sender, 'role', None) in ['helper', 'admin'])
 
         if not is_chat_owner and not is_helper:
             raise ValidationError("Only the chat owner or support helpers can write in this chat.")
