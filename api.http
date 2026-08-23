@@ -1,0 +1,111 @@
+@host = http://localhost:8000
+@admin_token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzg3MDU4MzkwLCJpYXQiOjE3ODY5NzE5OTAsImp0aSI6ImVmZDJhYmM3YWZjNDQ2YWQ4ODllMDRhNGI0MmJmNWEzIiwidXNlcl9pZCI6IjQifQ.TUMYfKiruJkT7V989c_-wk_eb6M4COqE4dfcf3ra2rQ
+
+
+### ==========================================
+### 0. АВТОРИЗАЦИЯ (JWT)
+### ==========================================
+
+### Получение токена
+POST {{host}}/api/v1/token/
+Content-Type: application/json
+
+{
+  "username": "ali_otlichnik",
+  "password": "Lorem2002"
+}
+
+### Обновление токена
+POST {{host}}/api/v1/token/refresh/
+Content-Type: application/json
+
+{
+  "refresh": "<ваш_refresh_токен>"
+}
+
+
+### ==========================================
+### 1. SCHOOL (/api/v1/school/)
+### ==========================================
+
+### Классы (Grades)
+GET {{host}}/api/v1/school/grades/
+Authorization: Bearer {{admin_token}}
+Accept: application/json
+
+
+### ==========================================
+### 2. STRUCTURE (/api/v1/structure/)
+### ==========================================
+
+### Управление пользователями
+GET {{host}}/api/v1/structure/users/
+Authorization: Bearer {{admin_token}}
+Accept: application/json
+
+### Оценки / Параллели
+GET {{host}}/api/v1/structure/grades/
+Authorization: Bearer {{admin_token}}
+Accept: application/json
+
+
+### ==========================================
+### 3. STUDENTS (/api/v1/students/)
+### ==========================================
+
+### Ученики
+GET {{host}}/api/v1/students/students/
+Authorization: Bearer {{admin_token}}
+
+### Предметы
+GET {{host}}/api/v1/students/subjects/
+Authorization: Bearer {{admin_token}}
+
+### Учебные группы
+GET {{host}}/api/v1/students/study-groups/
+Authorization: Bearer {{admin_token}}
+
+### Расписание
+GET {{host}}/api/v1/students/schedules/
+Authorization: Bearer {{admin_token}}
+
+### Календарные уроки
+GET {{host}}/api/v1/students/calendar-lessons/
+Authorization: Bearer {{admin_token}}
+
+### Посещаемость и оценки
+GET {{host}}/api/v1/students/attendance-grades/
+Authorization: Bearer {{admin_token}}
+
+### Оценки (Marks)
+GET {{host}}/api/v1/students/marks/
+Authorization: Bearer {{admin_token}}
+
+### Сообщения поддержки
+GET {{host}}/api/v1/students/support-messages/
+Authorization: Bearer {{admin_token}}
+
+### Уроки учителя
+GET {{host}}/api/v1/students/teacher-lessons/
+Authorization: Bearer {{admin_token}}
+
+### Домашние работы
+GET {{host}}/api/v1/students/homework-submissions/
+Authorization: Bearer {{admin_token}}
+
+
+### ==========================================
+### 4. USERS (/api/v1/users/)
+### ==========================================
+
+### Дашборд
+GET {{host}}/api/v1/users/dashboard/
+Authorization: Bearer {{admin_token}}
+
+### Список пользователей
+GET {{host}}/api/v1/users/list/
+Authorization: Bearer {{admin_token}}
+
+### Расписания пользователей
+GET {{host}}/api/v1/users/schedules/
+Authorization: Bearer {{admin_token}}

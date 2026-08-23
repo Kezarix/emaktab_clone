@@ -64,7 +64,7 @@ class ScheduleViewSet(ModelViewSet):
         if user.role == 'teacher':
             return Schedule.objects.filter(teacher=user)
         if user.role == 'student':
-            return Schedule.objects.filter(study_group=user.study_group)
+            return Schedule.objects.filter(school_class=user.school_class)
         return Schedule.objects.none()
 
 

@@ -24,3 +24,25 @@ class MarkSerializer(serializers.ModelSerializer):
     class Meta:
         model = Mark
         fields = '__all__'
+
+
+class ChildDashboardSerializer(serializers.Serializer):
+    child_info = UserListSerializer(read_only=True)
+    today_schedule = ScheduleSerializer(many=True, read_only=True)
+    recent_marks = MarkSerializer(many=True, read_only=True)
+
+
+class StudentDashboardSerializer(serializers.Serializer):
+    user = UserListSerializer(read_only=True)
+    today_schedule = ScheduleSerializer(many=True, read_only=True)
+    recent_marks = MarkSerializer(many=True, read_only=True)
+
+
+class ParentDashboardSerializer(serializers.Serializer):
+    user = UserListSerializer(read_only=True)
+    children = ChildDashboardSerializer(many=True, read_only=True)
+
+
+class TeacherDashboardSerializer(serializers.Serializer):
+    user = UserListSerializer(read_only=True)
+    today_schedule = ScheduleSerializer(many=True, read_only=True)

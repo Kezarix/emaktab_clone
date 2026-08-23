@@ -62,3 +62,8 @@ class User(AbstractUser):
         if full_name:
             return f"{full_name} ({self.username})"
         return self.username
+
+    def save(self, *args, **kwargs):
+        if self.email == "":
+            self.email = None
+        super().save(*args, **kwargs)
