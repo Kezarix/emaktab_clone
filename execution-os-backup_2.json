@@ -1,0 +1,112 @@
+{
+  "version": 2,
+  "exportedAt": "2026-09-10T20:52:02.555Z",
+  "start": "2026-08-25",
+  "end": "2026-12-01",
+  "activities": [
+    {
+      "id": "d707fc48-6bae-4d4e-8879-565e8beaaee3",
+      "name": "Listening",
+      "category": "IELTS",
+      "freq": 6
+    },
+    {
+      "id": "0759f57d-7305-4708-9e8f-662a29987919",
+      "name": "Reading",
+      "category": "IELTS",
+      "freq": 5
+    },
+    {
+      "id": "0a8a0614-f685-4242-a088-eb6e27f2cbc0",
+      "name": "Writing",
+      "category": "IELTS",
+      "freq": 4
+    },
+    {
+      "id": "6061e7e1-277d-4071-b375-9fb94a002654",
+      "name": "Speaking",
+      "category": "IELTS",
+      "freq": 4
+    },
+    {
+      "id": "6ebf0c0b-0b98-4e1f-93bc-35340c92f5fb",
+      "name": "SAT Math",
+      "category": "SAT",
+      "freq": 6
+    },
+    {
+      "id": "b71f5b77-27a2-4e4b-8e06-02740e27c0cc",
+      "name": "SAT R&W",
+      "category": "SAT",
+      "freq": 5
+    },
+    {
+      "id": "50807faa-7822-452d-93da-69623177a855",
+      "name": "IT",
+      "category": "Career",
+      "freq": 6
+    },
+    {
+      "id": "8b16f708-d0bd-4ffc-9194-3e5f79b7ab72",
+      "name": "SPORT",
+      "category": "Health",
+      "freq": 5
+    },
+    {
+      "id": "7cac43e5-2aad-4f9a-bd9d-0e35ce025f4d",
+      "name": "Religion",
+      "category": "Personal",
+      "freq": 7
+    },
+    {
+      "id": "e0f5ec12-ae20-41ab-8b47-b87c5c7ad62e",
+      "name": "SKINCARE",
+      "category": "Personal",
+      "freq": 7
+    },
+    {
+      "id": "de2f5b24-5671-44c8-b4ae-78e37dfd6da3",
+      "name": "Admission",
+      "category": "Admission",
+      "freq": 3
+    }
+  ],
+  "checks": {
+    "[object Object]|2026-08-24": false,
+    "[object Object]|2026-08-25": true,
+    "[object Object]|2026-08-26": true,
+    "[object Object]|2026-11-29": false,
+    "[object Object]|2026-08-27": true,
+    "0a8a0614-f685-4242-a088-eb6e27f2cbc0|2026-08-25": false,
+    "6ebf0c0b-0b98-4e1f-93bc-35340c92f5fb|2026-08-26": true,
+    "50807faa-7822-452d-93da-69623177a855|2026-08-27": true,
+    "50807faa-7822-452d-93da-69623177a855|2026-08-26": true,
+    "e0f5ec12-ae20-41ab-8b47-b87c5c7ad62e|2026-08-27": true,
+    "8b16f708-d0bd-4ffc-9194-3e5f79b7ab72|2026-08-27": true,
+    "d707fc48-6bae-4d4e-8879-565e8beaaee3|2026-08-27": true,
+    "0759f57d-7305-4708-9e8f-662a29987919|2026-08-27": true,
+    "0a8a0614-f685-4242-a088-eb6e27f2cbc0|2026-08-27": true,
+    "0a8a0614-f685-4242-a088-eb6e27f2cbc0|2026-08-28": true,
+    "6ebf0c0b-0b98-4e1f-93bc-35340c92f5fb|2026-08-28": true,
+    "8b16f708-d0bd-4ffc-9194-3e5f79b7ab72|2026-08-28": 1,
+    "7cac43e5-2aad-4f9a-bd9d-0e35ce025f4d|2026-08-29": 1,
+    "50807faa-7822-452d-93da-69623177a855|2026-08-28": 1,
+    "6ebf0c0b-0b98-4e1f-93bc-35340c92f5fb|2026-08-29": 2,
+    "6ebf0c0b-0b98-4e1f-93bc-35340c92f5fb|2026-08-31": 2,
+    "6ebf0c0b-0b98-4e1f-93bc-35340c92f5fb|2026-09-01": 2,
+    "6ebf0c0b-0b98-4e1f-93bc-35340c92f5fb|2026-09-03": 2,
+    "6ebf0c0b-0b98-4e1f-93bc-35340c92f5fb|2026-09-05": 2,
+    "6ebf0c0b-0b98-4e1f-93bc-35340c92f5fb|2026-09-04": 1,
+    "6ebf0c0b-0b98-4e1f-93bc-35340c92f5fb|2026-09-02": 1,
+    "6ebf0c0b-0b98-4e1f-93bc-35340c92f5fb|2026-08-30": 1,
+    "50807faa-7822-452d-93da-69623177a855|2026-09-05": 1,
+    "e0f5ec12-ae20-41ab-8b47-b87c5c7ad62e|2026-09-05": 1,
+    "50807faa-7822-452d-93da-69623177a855|2026-09-06": 1,
+    "50807faa-7822-452d-93da-69623177a855|2026-09-07": 2,
+    "e0f5ec12-ae20-41ab-8b47-b87c5c7ad62e|2026-09-06": 1,
+    "e0f5ec12-ae20-41ab-8b47-b87c5c7ad62e|2026-09-07": 2,
+    "0759f57d-7305-4708-9e8f-662a29987919|2026-09-10": 1,
+    "e0f5ec12-ae20-41ab-8b47-b87c5c7ad62e|2026-09-10": 1,
+    "de2f5b24-5671-44c8-b4ae-78e37dfd6da3|2026-09-10": 1
+  }
+}

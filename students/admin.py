@@ -31,20 +31,22 @@ class HomeworkSubmissionAdmin(admin.ModelAdmin):
 
 @admin.register(Mark)
 class AttendanceAndGradeAdmin(admin.ModelAdmin):
-    list_display = ('student', 'get_subject', 'get_class', 'value', 'date')
-
-    list_filter = ('date', 'academic_load__subject', 'academic_load__school_grade')
-
+    list_display = ('student', 'get_subject', 'get_class', 'value', 'date', 'is_present')
+    list_filter = ('date', 'academic_load__subject', 'academic_load__school_grade', 'is_present')
     search_fields = ('student__first_name', 'student__last_name')
+    autocomplete_fields = ('student', 'academic_load')
+    fields = ('student', 'academic_load', 'value', 'date', 'is_present')
 
     @admin.display(description="Предмет")
     def get_subject(self, obj):
-        return obj.academic_load.subject.name
+        return obj.academic_load.subject.name if obj.academic_load else '—'
 
     @admin.display(description="Класс")
     def get_class(self, obj):
-        return f"{obj.academic_load.school_grade.number}-{obj.academic_load.school_grade.letter}"
-
+        if not obj.academic_load:
+            return '—'
+        g = obj.academic_load.school_grade
+        return f"{g.number}-{g.letter}"
 
 @admin.register(Subject)
 class SubjectAdmin(admin.ModelAdmin):

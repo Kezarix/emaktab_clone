@@ -9,13 +9,25 @@ class CustomUserCreationForm(forms.ModelForm):
 
     class Meta:
         model = User
-        fields = ('username', 'password', 'email', 'role', 'first_name', 'last_name')
+        fields = (
+            'username', 'password', 'email', 'role',
+            'first_name', 'last_name', 'fathers_name',
+            'phone', 'major', 'school_class',
+        )
 
     def clean_email(self):
         email = self.cleaned_data.get('email')
-        if not email:
-            return None
-        return email
+        return email or None
+
+    def clean(self):
+        cleaned = super().clean()
+        role = cleaned.get('role')
+        major = cleaned.get('major')
+
+        # учитель обязан иметь major
+        if role == 'teacher' and not major:
+            self.add_error('major', 'Major is required for teachers.')
+        return cleaned
 
     def save(self, commit=True):
         user = super().save(commit=False)
@@ -31,19 +43,35 @@ class CustomUserCreationForm(forms.ModelForm):
 class UserAdmin(BaseUserAdmin):
     add_form = CustomUserCreationForm
 
-    # Выводим роль в список, как у тебя на скрине
-    list_display = ('username', 'email', 'last_name', 'first_name', 'role', 'is_staff')
+    list_display = (
+        'username', 'email', 'last_name', 'first_name',
+        'role', 'major', 'is_staff',
+    )
+    list_filter = ('role', 'is_staff', 'is_active', 'major')
     search_fields = ('username', 'first_name', 'last_name', 'email')
 
+    # -------- форма СОЗДАНИЯ --------
     add_fieldsets = (
         (None, {
             'classes': ('wide',),
-            'fields': ('username', 'password', 'email', 'role', 'first_name', 'last_name'),
+            'fields': (
+                'username', 'password',
+                'email', 'role',
+                'first_name', 'last_name', 'fathers_name',
+                'phone', 'major', 'school_class',
+            ),
         }),
     )
 
+    # -------- форма РЕДАКТИРОВАНИЯ --------
     fieldsets = BaseUserAdmin.fieldsets + (
-        ('Дополнительно', {'fields': ('role', 'fathers_name', 'school_class', 'birth_date', 'parents')}),
+        ('Additional Info', {
+            'fields': (
+                'role', 'fathers_name', 'phone',
+                'major', 'school_class',
+                'birth_date', 'parents',
+            )
+        }),
     )
 
     def save_model(self, request, obj, form, change):

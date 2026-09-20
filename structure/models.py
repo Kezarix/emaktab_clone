@@ -28,12 +28,12 @@ class AssessmentWork(models.Model):
         type_name = "SAT" if self.type == 'sor' else "SAQ"
         try:
             subject = self.calendar_lesson.schedule.subject.name
-            group_name = self.calendar_lesson.schedule.group.name
+            class_label = str(self.calendar_lesson.schedule.school_class)
         except AttributeError:
             subject = "Subject"
-            group_name = "Class"
+            class_label = "Class"
 
-        return f"{type_name}: {self.name or ''} in {subject} ({group_name}) — max {self.max_score}b."
+        return f"{type_name}: {self.name or ''} in {subject} ({class_label}) — max {self.max_score}b."
 
     def clean(self):
         super().clean()
@@ -76,14 +76,8 @@ class AssessmentWork(models.Model):
         super().save(*args, **kwargs)
 
         if is_new:
-            group = self.calendar_lesson.schedule.group
-
-            if hasattr(group, 'students'):
-                students = group.students.all()
-            elif hasattr(group, 'student_set'):
-                students = group.student_set.all()
-            else:
-                students = group.user_set.filter(role='student')
+            school_class = self.calendar_lesson.schedule.school_class
+            students = school_class.students.filter(role='student')
 
             AssessmentGrade.objects.bulk_create([
                 AssessmentGrade(
@@ -135,7 +129,7 @@ class AssessmentGrade(models.Model):
 
             tg, _ = TermGrade.objects.get_or_create(
                 student=self.student,
-                schedule=self.work.calendar_lesson.schedule,
+                  schedule=self.work.calendar_lesson.schedule,
                 term=t_num
             )
             tg.save()

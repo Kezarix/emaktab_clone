@@ -7,7 +7,8 @@ SECRET_KEY = 'django-insecure-o&*5av1r5m21us@#!532t49*#dn^h6_%l*tol(5%c)@ert4bms
 
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
+CORS_ALLOW_ALL_ORIGINS = True
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -16,18 +17,23 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'corsheaders',
+
     'rest_framework',
     'rest_framework_simplejwt',
     'drf_yasg',
     'debug_toolbar',
     'widget_tweaks',
+
     'school',
     'students',
     'structure',
     'users',
+
 ]
 
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',
     'debug_toolbar.middleware.DebugToolbarMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -117,3 +123,16 @@ INTERNAL_IPS = [
 import mimetypes
 
 mimetypes.add_type("application/javascript", ".js", True)
+
+import os
+
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'kundalik',
+        'USER': 'kundalik_user',
+        'PASSWORD': 'pass123',
+        'HOST': 'localhost',
+        'PORT': '5432',
+    }
+}

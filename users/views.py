@@ -5,13 +5,14 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.views import APIView
 
 from students.models import Schedule, Mark
+from students.serializers import (
+    ScheduleSerializer,
+    AttendanceAndGradeSerializer,
+    StudentBriefSerializer,
+)
 from .serializers import (
     UserListSerializer,
-    ScheduleSerializer,
-    StudentDashboardSerializer,
-    ChildDashboardSerializer,
-    ParentDashboardSerializer,
-    TeacherDashboardSerializer,
+    UserSerializer,
 )
 
 User = get_user_model()
@@ -19,7 +20,7 @@ User = get_user_model()
 
 class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all()
-    serializer_class = UserListSerializer
+    serializer_class = UserSerializer
     permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
@@ -36,10 +37,13 @@ class ScheduleViewSet(viewsets.ModelViewSet):
 
     def create(self, request, *args, **kwargs):
         user = request.user
-        if not (user.is_superuser or user.is_staff or getattr(user, 'role', None) in ['admin', 'director', 'head_teacher']):
+        if not (
+            user.is_superuser or user.is_staff or
+            getattr(user, 'role', None) in ['admin', 'director', 'head_teacher']
+        ):
             return Response(
                 {"detail": "You do not have permission to modify the schedule."},
-                status=status.HTTP_403_FORBIDDEN
+                status=status.HTTP_403_FORBIDDEN,
             )
         return super().create(request, *args, **kwargs)
 
@@ -49,48 +53,47 @@ class DashboardAPIView(APIView):
 
     def get(self, request):
         user = request.user
-        role = user.role
+        role = getattr(user, 'role', None)
 
         if role == 'student':
-            today_schedule = Schedule.objects.filter(school_class=user.school_class) if user.school_class else []
-            recent_marks = Mark.objects.filter(student=user).order_by('-id')[:10]
-
-            serializer = StudentDashboardSerializer({
-                'user': user,
-                'today_schedule': today_schedule,
-                'recent_marks': recent_marks
+            schedule = Schedule.objects.filter(
+                school_class=user.school_class
+            ) if user.school_class else Schedule.objects.none()
+            marks = Mark.objects.filter(student=user).order_by('-id')[:10]
+            return Response({
+                'user': UserListSerializer(user).data,
+                'today_schedule': ScheduleSerializer(schedule, many=True).data,
+                'recent_marks': AttendanceAndGradeSerializer(marks, many=True).data,
             })
-            return Response(serializer.data)
 
-        elif role == 'parent':
-            children_data = []
-            for child in user.children.all():
-                child_schedule = Schedule.objects.filter(school_class=child.school_class) if child.school_class else []
+        if role == 'parent':
+            children = user.children.all()
+            payload = []
+            for child in children:
+                child_schedule = Schedule.objects.filter(
+                    school_class=child.school_class
+                ) if child.school_class else Schedule.objects.none()
                 child_marks = Mark.objects.filter(student=child).order_by('-id')[:10]
-
-                children_data.append({
-                    'child_info': child,
-                    'today_schedule': child_schedule,
-                    'recent_marks': child_marks
+                payload.append({
+                    'child_info': UserListSerializer(child).data,
+                    'today_schedule': ScheduleSerializer(child_schedule, many=True).data,
+                    'recent_marks': AttendanceAndGradeSerializer(child_marks, many=True).data,
                 })
-
-            serializer = ParentDashboardSerializer({
-                'user': user,
-                'children': children_data
+            return Response({
+                'user': UserListSerializer(user).data,
+                'children': payload,
             })
-            return Response(serializer.data)
 
-        elif role == 'teacher':
-            today_schedule = Schedule.objects.filter(teacher=user)
-
-            serializer = TeacherDashboardSerializer({
-                'user': user,
-                'today_schedule': today_schedule
+        if role == 'teacher':
+            schedule = Schedule.objects.filter(teacher=user)
+            return Response({
+                'user': UserListSerializer(user).data,
+                'today_schedule': ScheduleSerializer(schedule, many=True).data,
             })
-            return Response(serializer.data)
 
+        # admin / director / head_teacher / clerk / helper
         return Response({
-            "user": user.username,
-            "role": role,
-            "message": "Панель администратора"
+            'user': UserListSerializer(user).data,
+            'role': role,
+            'message': 'Management Dashboard',
         })

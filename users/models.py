@@ -1,4 +1,5 @@
 from django.contrib.auth.models import AbstractUser
+from django.core.exceptions import ValidationError
 from django.db import models
 
 
@@ -20,13 +21,22 @@ class User(AbstractUser):
     fathers_name = models.CharField(max_length=150, blank=True, null=True, verbose_name="Patronymic")
     birth_date = models.DateField(blank=True, null=True, verbose_name="Birth Date")
 
+    major = models.ForeignKey(
+        'students.Subject',
+        on_delete=models.SET_NULL,
+        verbose_name="Major",
+        blank=True,
+        null=True,
+        related_name='teachers_majoring',
+    )
+
     school_class = models.ForeignKey(
         'school.SchoolGrade',
         on_delete=models.PROTECT,
         related_name='students',
         verbose_name="School Grade",
         blank=True,
-        null=True
+        null=True,
     )
 
     parents = models.ManyToManyField(
@@ -35,7 +45,7 @@ class User(AbstractUser):
         related_name='children',
         symmetrical=False,
         limit_choices_to={'role': 'parent'},
-        verbose_name="Parents"
+        verbose_name="Parents",
     )
 
     groups = models.ManyToManyField(
@@ -62,6 +72,11 @@ class User(AbstractUser):
         if full_name:
             return f"{full_name} ({self.username})"
         return self.username
+
+    def clean(self):
+        super().clean()
+        if self.role == 'teacher' and not self.major_id:
+            raise ValidationError({'major': 'Major is required for teachers.'})
 
     def save(self, *args, **kwargs):
         if self.email == "":

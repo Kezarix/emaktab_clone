@@ -112,6 +112,8 @@ class HomeworkSubmission(models.Model):
     def __str__(self):
         return f"Ответ от {self.student.username} на урок {self.lesson_id}"
 
+from django.core.exceptions import ValidationError
+
 class Mark(models.Model):
     student = models.ForeignKey(
         settings.AUTH_USER_MODEL,
@@ -126,14 +128,37 @@ class Mark(models.Model):
         related_name='marks',
         verbose_name="Academic Load"
     )
+
+    lesson = models.ForeignKey(
+        'students.CalendarLesson',
+        on_delete=models.SET_NULL,
+        null=True, blank=True,
+        related_name='marks',
+    )
+
+
     value = models.CharField(max_length=10, verbose_name="Grade / Mark")
     date = models.DateField(verbose_name="Date")
     is_present = models.BooleanField(default=False, verbose_name="Is Present")
 
+    VALID_VALUES = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10',
+                    'S', 'I', 'A', 'T', 'L']
+
     class Meta:
         verbose_name = "Grade and Attendance"
         verbose_name_plural = "Grades and Attendance"
-        unique_together = ('student', 'academic_load', 'date')
+        unique_together = ('student', 'academic_load', 'date', 'lesson')
+
+    def clean(self):
+        super().clean()
+        if self.value and self.value not in self.VALID_VALUES:
+            raise ValidationError({
+                'value': 'Qiymat 1-10, S, I, A, T yoki L bo\'lishi kerak.'
+            })
+
+    def save(self, *args, **kwargs):
+        self.full_clean()
+        super().save(*args, **kwargs)
 
     def __str__(self):
         return f"{self.student.last_name} — {self.academic_load.subject.name}: {self.value}"
